@@ -58,4 +58,39 @@ contract MyBEP20Token {
     address private owner;
     uint256 public totalSupply;
     uint256 private constant MAX_SUPPLY = 5_000_000_000 * 10**18; // 5 billion tokens 
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) private  _allowances;
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
+    event Mint(address indexed to, uint256 value);
+    event Burn(address indexed from, uint256 value);
+    event OwnershipTransferred(address indexed  owner,address indexed newOwner);
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can call this function");
+        _;
+    }
+
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint8 _decimals,
+        uint256 _initialSupply
+    ) {
+        require(
+            _initialSupply <= MAX_SUPPLY,
+            "Initial supply exceeds max supply"
+        );
+        owner = msg.sender;
+        name = _name;
+        symbol = _symbol;
+        decimals = _decimals;
+
+        mint(msg.sender, _initialSupply);
+    }
 }
