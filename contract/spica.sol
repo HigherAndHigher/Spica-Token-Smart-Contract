@@ -93,4 +93,110 @@ contract MyBEP20Token {
 
         mint(msg.sender, _initialSupply);
     }
+
+    function mint(address _to, uint256 _amount)
+        internal
+        onlyOwner
+        returns (bool)
+    {
+        require(_amount > 0, "ERR: Amount must be greater than zero");
+        require(_to != address(0), "ERR: transfer to the zero address");
+        totalSupply += _amount;
+        balanceOf[_to] += _amount;
+        emit Mint(_to, _amount);
+        emit Transfer(address(0), _to, _amount);
+        return true;
+    }
+
+    function transfer(address _to, uint256 _value)
+        public
+        returns (bool success)
+    {   
+        require(_value!=0,"ERR: Value must be greater than Zero");
+        require(_to != address(0), "ERR: transfer to the zero address");
+        require(balanceOf[msg.sender] >= _value, "Insufficient balance");
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_to] += _value;
+        emit Transfer(msg.sender, _to, _value);
+        return true;
+    }
+
+    function allowance(address _owner, address _spender)
+        public
+        view
+        virtual
+        returns (uint256)
+    {
+        return _allowances[_owner][_spender];
+    }
+
+    function approve(address _spender, uint256 _value)
+        public
+        returns (bool success)
+    {
+        _allowances[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
+        return true;
+    }
+
+      function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
+       
+        _approve(owner, spender, allowance(owner, spender).add(addedValue));
+        return true;
+    }
+
+     function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
+        
+        uint256 currentAllowance = allowance(owner, spender);
+        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+        unchecked {
+            _approve(owner, spender, currentAllowance.sub(subtractedValue));
+        }
+
+        return true;
+    }
+
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
+        require(_from != address(0), "ERR: transfer from the zero address");
+        require(_to != address(0), "ERR: transfer to the zero address");
+
+        require(balanceOf[_from] >= _value, "ERR: Insufficient balance");
+        require(
+            _allowances[_from][msg.sender] >= _value,
+            "Insufficient allowance"
+        );
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
+        _allowances[_from][msg.sender] -= _value;
+        emit Transfer(_from, _to, _value);
+        return true;
+    }
+
+     function transferOwnership(address _newOwner) private onlyOwner {
+        require(_newOwner != address(0), "Ownable: new owner address can not be zero address");
+        emit OwnershipTransferred(owner, _newOwner);
+        owner = _newOwner;
+  }
+
+    function burn(uint256 _amount) public returns (bool) {
+        require(_amount > 0, "ERR: Amount must be greater than zero");
+        require(balanceOf[msg.sender] >= _amount, "Insufficient balance");
+        balanceOf[msg.sender] -= _amount;
+        totalSupply -= _amount;
+        emit Burn(msg.sender, _amount);
+        emit Transfer(msg.sender, address(0), _amount);
+        return true;
+    }
+
+    function _approve(address _owner, address _spender, uint256 _amount) internal virtual {
+        require(_owner != address(0), "ERC20: approve from the zero address");
+        require(_spender != address(0), "ERC20: approve to the zero address");
+
+        _allowances[owner][_spender] = _amount;
+        emit Approval(owner, _spender, _amount);
+    }
 }
