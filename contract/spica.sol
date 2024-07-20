@@ -72,7 +72,7 @@ contract MyBEP20Token {
     event OwnershipTransferred(address indexed  owner,address indexed newOwner);
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can call this function");
+        require(msg.sender == owner, "オーナーだけがこの関数を呼び出すことができる");
         _;
     }
 
@@ -84,7 +84,7 @@ contract MyBEP20Token {
     ) {
         require(
             _initialSupply <= MAX_SUPPLY,
-            "Initial supply exceeds max supply"
+            "初期供給量が最大供給量を超える"
         );
         owner = msg.sender;
         name = _name;
@@ -99,8 +99,8 @@ contract MyBEP20Token {
         onlyOwner
         returns (bool)
     {
-        require(_amount > 0, "ERR: Amount must be greater than zero");
-        require(_to != address(0), "ERR: transfer to the zero address");
+        require(_amount > 0, "ERR: 金額はゼロより大きくなければならない");
+        require(_to != address(0), "ERR: ゼロアドレスに転送");
         totalSupply += _amount;
         balanceOf[_to] += _amount;
         emit Mint(_to, _amount);
@@ -112,9 +112,9 @@ contract MyBEP20Token {
         public
         returns (bool success)
     {   
-        require(_value!=0,"ERR: Value must be greater than Zero");
-        require(_to != address(0), "ERR: transfer to the zero address");
-        require(balanceOf[msg.sender] >= _value, "Insufficient balance");
+        require(_value!=0,"ERR: 値はゼロより大きくなければならない");
+        require(_to != address(0), "ERR: ゼロアドレスに転送");
+        require(balanceOf[msg.sender] >= _value, "バランス不足");
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;
         emit Transfer(msg.sender, _to, _value);
@@ -148,7 +148,7 @@ contract MyBEP20Token {
      function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
         
         uint256 currentAllowance = allowance(owner, spender);
-        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+        require(currentAllowance >= subtractedValue, "ERC20：許容範囲がゼロ以下に減少");
         unchecked {
             _approve(owner, spender, currentAllowance.sub(subtractedValue));
         }
@@ -161,10 +161,10 @@ contract MyBEP20Token {
         address _to,
         uint256 _value
     ) public returns (bool success) {
-        require(_from != address(0), "ERR: transfer from the zero address");
-        require(_to != address(0), "ERR: transfer to the zero address");
+        require(_from != address(0), "ERR: ゼロアドレスからの転送");
+        require(_to != address(0), "ERR: ゼロアドレスに転送");
 
-        require(balanceOf[_from] >= _value, "ERR: Insufficient balance");
+        require(balanceOf[_from] >= _value, "ERR：残高不足");
         require(
             _allowances[_from][msg.sender] >= _value,
             "Insufficient allowance"
