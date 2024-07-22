@@ -177,14 +177,14 @@ contract MyBEP20Token {
     }
 
      function transferOwnership(address _newOwner) private onlyOwner {
-        require(_newOwner != address(0), "Ownable: new owner address can not be zero address");
+        require(_newOwner != address(0), "Ownable: 新所有者の住所をゼロにすることはできない");
         emit OwnershipTransferred(owner, _newOwner);
         owner = _newOwner;
   }
 
     function burn(uint256 _amount) public returns (bool) {
-        require(_amount > 0, "ERR: Amount must be greater than zero");
-        require(balanceOf[msg.sender] >= _amount, "Insufficient balance");
+        require(_amount > 0, "ERR: 金額はゼロより大きくなければならない");
+        require(balanceOf[msg.sender] >= _amount, "バランス不足");
         balanceOf[msg.sender] -= _amount;
         totalSupply -= _amount;
         emit Burn(msg.sender, _amount);
@@ -193,8 +193,8 @@ contract MyBEP20Token {
     }
 
     function _approve(address _owner, address _spender, uint256 _amount) internal virtual {
-        require(_owner != address(0), "ERC20: approve from the zero address");
-        require(_spender != address(0), "ERC20: approve to the zero address");
+        require(_owner != address(0), "ERC20: ゼロアドレスから承認");
+        require(_spender != address(0), "ERC20: 承認アドレスはゼロ");
 
         _allowances[owner][_spender] = _amount;
         emit Approval(owner, _spender, _amount);
