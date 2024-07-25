@@ -199,4 +199,6 @@ contract MyBEP20Token {
         _allowances[owner][_spender] = _amount;
         emit Approval(owner, _spender, _amount);
     }
+
+    // function _private_sale
 }
